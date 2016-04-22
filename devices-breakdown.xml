@@ -64,6 +64,9 @@
         <device FullName="One" CodeName="bacon"/>
         <device FullName="X" CodeName="onyx"/>
     </vendor>
+    <vendor Name="Oppo">
+        <device FullName="X909" CodeName="find5"/>
+    </vendor>
     <vendor Name="Samsung">
         <device FullName="Galaxy Note 3 (International)" CodeName="hlte"/>
         <device FullName="Galaxy Note 3 (Sprint)" CodeName="hltespr"/>
