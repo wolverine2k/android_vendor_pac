@@ -48,6 +48,8 @@ add_lunch_combo pac_surnia-userdebug
 add_lunch_combo pac_umts_spyder-userdebug
 add_lunch_combo pac_thea-userdebug
 add_lunch_combo pac_titan-userdebug
+# Nextbit
+add_lunch_combo pac_ether-userdebug
 # Nvidia
 add_lunch_combo pac_wx_na_do-userdebug
 # OnePlus
@@ -64,7 +66,6 @@ add_lunch_combo pac_hlte-userdebug
 add_lunch_combo pac_hltetmo-userdebug
 add_lunch_combo pac_hltespr-userdebug
 add_lunch_combo pac_i9300-userdebug
-add_lunch_combo pac_i9500-userdebug
 add_lunch_combo pac_jflteatt-userdebug
 add_lunch_combo pac_jfltecan-userdebug
 add_lunch_combo pac_jfltespr-userdebug
@@ -73,9 +74,6 @@ add_lunch_combo pac_jflteusc-userdebug
 add_lunch_combo pac_jfltevzw-userdebug
 add_lunch_combo pac_jfltexx-userdebug
 add_lunch_combo pac_manta-userdebug
-add_lunch_combo pac_n5100-userdebug
-add_lunch_combo pac_n5110-userdebug
-add_lunch_combo pac_n5120-userdebug
 add_lunch_combo pac_s2ve-userdebug
 add_lunch_combo pac_s2vep-userdebug
 add_lunch_combo pac_serrano3gxx-userdebug

@@ -28,6 +28,7 @@
   <device name="d2vzw"/>
   <device name="d851"/>
   <device name="d855"/>
+  <device name="ether"/>
   <device name="evita"/>
   <device name="falcon"/>
   <device name="find5"/>
@@ -41,7 +42,6 @@
   <!-- <device name="hltespr"/> -->
   <!-- <device name="hltetmo"/> -->
   <device name="honami"/>
-  <device name="i9500"/>
   <device name="jflteatt"/>
   <device name="jfltecan"/>
   <device name="jfltespr"/>
@@ -56,7 +56,6 @@
   <device name="m7vzw"/>
   <device name="m8"/>
   <device name="mt2"/>
-  <!-- <device name="n5110"/> -->
   <device name="obake"/>
   <device name="onyx"/>
   <device name="osprey"/>
