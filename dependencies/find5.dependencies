@@ -1,38 +1,44 @@
 [
   {
-    "remote": "ss",
+    "remote": "github",
+    "account": "Pinky-Inky-and-Clyde",
     "repository": "proprietary_vendor_oppo",
     "target_path": "vendor/oppo",
-    "revision": "pac-6.0"
-  },
-  {
-    "remote": "ss",
-    "repository": "android_device_oppo_apq8064-common",
-    "target_path": "device/oppo/apq8064-common",
-    "revision": "pac-6.0"
+    "revision": "cm-13.0"
   },
   {
     "remote": "github",
+    "account": "wuxianlin",
+    "repository": "android_device_oppo_apq8064-common",
+    "target_path": "device/oppo/apq8064-common",
+    "revision": "cm-13.0"
+  },
+  {
+    "remote": "github",
+    "account": "wolverine2k",
     "repository": "android_device_oppo_find5",
     "target_path": "device/oppo/find5",
     "revision": "pac-6.0"
   },
   {
     "remote": "github",
+    "account": "CyanogenMod",
     "repository": "android_device_oppo_common",
     "target_path": "device/oppo/common",
-    "revision": "pac-6.0"
+    "revision": "cm-13.0"
   },
   {
     "remote": "github",
+    "account": "CyanogenMod",
     "repository": "android_device_qcom_common",
     "target_path": "device/qcom/common",
-    "revision": "pac-6.0"
+    "revision": "cm-13.0"
   },
   {
     "remote": "github",
+    "account": "wuxianlin",
     "repository": "android_kernel_oppo_n1",
     "target_path": "kernel/oppo/n1",
-    "revision": "pac-6.0"
+    "revision": "cm-13.0"
   }
 ]
