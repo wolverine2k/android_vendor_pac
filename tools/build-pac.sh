@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # build-pac.sh: the overarching build script for the ROM.
-# Copyright (C) 2015 The PAC-ROM Project
+# Copyright (C) 2015-2016 The PAC-ROM Project
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@ usage() {
     echo -e "        1 - Verbose build output"
     echo -e "        2 - Quiet build output"
     echo -e "    -f  Fetch extras"
+    echo -e "    -g  Do not generate the changelog"
     echo -e "    -i  Ignore minor errors during build"
     echo -e "    -j# Set number of jobs"
     echo -e "    -k  Rewrite roomservice after dependencies update"
@@ -44,8 +45,13 @@ usage() {
     echo -e "        1 - Normal sync"
     echo -e "        2 - Make snapshot"
     echo -e "        3 - Restore previous snapshot, then snapshot sync"
-    echo -e "    -t  Build ROM with TWRP Recovery (Extreme caution, ONLY for developers)"
-    echo -e "        (This may produce an invalid recovery. Use only if you have the correct settings for these)"
+    echo -e "    -u  Upload rom to any server"
+    echo -e "        You need the server file"
+    echo -e "            Step 1 - Create 'Server-device' file in your $HOME/ DIR"
+    echo -e "            Step 2 - Fill of this way: username::password::hostserver::serverlocationfiles"
+    echo -e "                     example: login::password::basketbuild.com::/device/folder"
+    echo -e "            Alternative: Use this command to create the text file"
+    echo -e "                     echo 'login::password::basketbuild.com::/device/folder' > $HOME/Server-$device"
     echo -e "    -w#  Log file options:"
     echo -e "        1 - Send warnings and errors to a log file"
     echo -e "        2 - Send all output to a log file"
@@ -64,7 +70,7 @@ usage() {
 
 # PAC version
 export PAC_VERSION_MAJOR="MM"
-export PAC_VERSION_MINOR="Alpha 1"
+export PAC_VERSION_MINOR="Beta"
 export PAC_VERSION_MAINTENANCE="Unofficial"
 # Acceptable maintenance versions are; Stable, Official, Nightly or Unofficial
 
@@ -76,26 +82,28 @@ fi
 
 
 # Maintenance logic
-if [ -s ~/PACname ]; then
-    export PAC_MAINTENANCE=$(cat ~/PACname)
+if [ -s "$HOME"/PACname ]; then
+    export PAC_MAINTENANCE=$(cat "$HOME"/PACname)
 else
     export PAC_MAINTENANCE="$PAC_VERSION_MAINTENANCE"
 fi
 if [ -z "$PAC_VERSION_MINOR" ]; then
     export PAC_VERSION="$PAC_VERSION_MAJOR $PAC_MAINTENANCE"
+    export VO="${bldmag}$PAC_VERSION_MAJOR ${bldred}$PAC_MAINTENANCE${rst}"
 else
     export PAC_VERSION="$PAC_VERSION_MAJOR $PAC_VERSION_MINOR $PAC_MAINTENANCE"
+    export VO="${bldmag}$PAC_VERSION_MAJOR ${bldcya}$PAC_VERSION_MINOR ${bldred}$PAC_MAINTENANCE${rst}"
 fi
 
 
 # Check directories
 if [ ! -d ".repo" ]; then
-    echo -e "${bldred}No .repo directory found.  Is this an Android build tree?${rst}"
+    echo -e "${bldred}No .repo directory found. Is this an Android build tree?${rst}"
     echo ""
     exit 1
 fi
 if [ ! -d "vendor/pac" ]; then
-    echo -e "${bldred}No vendor/pac directory found.  Is this a PAC build tree?${rst}"
+    echo -e "${bldred}No vendor/pac directory found. Is this a PAC build tree?${rst}"
     echo ""
     exit 1
 fi
@@ -148,16 +156,18 @@ opt_lrd=0
 opt_only=0
 opt_reset=0
 opt_sync=0
-opt_twrp=0
+opt_upload=0
 opt_log=0
+opt_changelog=0
 
-while getopts "ac:de:fij:klo:rs:tw:" opt; do
+while getopts "ac:de:fgij:klo:rs:uw:" opt; do
     case "$opt" in
     a) opt_adb=1 ;;
     c) opt_clean="$OPTARG" ;;
     d) opt_ccache=1 ;;
     e) opt_extra="$OPTARG" ;;
     f) opt_fetch=1 ;;
+    g) opt_changelog=1 ;;
     i) opt_ignore=1 ;;
     j) opt_jobs="$OPTARG" ;;
     k) opt_kr=1 ;;
@@ -165,7 +175,7 @@ while getopts "ac:de:fij:klo:rs:tw:" opt; do
     o) opt_only="$OPTARG" ;;
     r) opt_reset=1 ;;
     s) opt_sync="$OPTARG" ;;
-    t) opt_twrp=1 ;;
+    u) opt_upload=1 ;;
     w) opt_log="$OPTARG" ;;
     *) usage
     esac
@@ -178,16 +188,34 @@ fi
 device="$1"
 
 
+# Check server file for uploading
+if [ "$opt_upload" -ne 0 ]; then
+    if [ ! -f "$HOME/Server-$device" ]; then
+        echo -e "${bldcya}You are using the option to automatically upload the files after build${rst}"
+        echo -e "${bldcya}but the server configuration file is not found, please add it${rst}"
+        echo ""
+        echo -e "${bldcya}    Step 1 - Create 'Server-device' file in your $HOME/ DIR${rst}"
+        echo -e "${bldcya}    Step 2 - Fill of this way: username::password::hostserver::serverlocationfiles${rst}"
+        echo -e "${bldcya}             example: login::password::basketbuild.com::/device/folder${rst}"
+        echo ""
+        echo -e "${bldcya}    Alternative: Use this command to create the text file${rst}"
+        echo -e "${bldcya}             echo 'login::password::basketbuild.com::/device/folder' > $HOME/Server-$device${rst}"
+        echo ""
+        exit 1
+    fi
+fi
+
+
 # Ccache options
 if [ "$opt_ccache" -eq 1 ]; then
-    echo -e "${bldcya}Ccache not be used in this build${rst}"
+    echo -e "${bldcya}Ccache not used in this build${rst}"
     unset USE_CCACHE
     echo ""
 fi
 
 
 # PAC device dependencies
-echo -e "${bldcya}Looking for PAC product dependencies${bldgrn}"
+echo -e "${bldcya}Looking for PAC device dependencies${bldgrn}"
 if [ "$opt_kr" -ne 0 ]; then
     vendor/pac/tools/getdependencies.py "$device" "$opt_kr"
 else
@@ -207,10 +235,11 @@ fi
 export TARGET_IGNORE_ERRORS
 
 if [ "$TARGET_IGNORE_ERRORS" == "true" ]; then
-   opt_clean=1
-   echo -e "${bldred}Last build ignored errors. Cleaning Out${rst}"
-   unset TARGET_IGNORE_ERRORS
-   echo -e "false" > .ignore_err
+    opt_clean=1
+    echo -e "${bldred}Last build ignored errors. Cleaning Out${rst}"
+    echo ""
+    unset TARGET_IGNORE_ERRORS
+    echo -e "false" > .ignore_err
 fi
 
 
@@ -234,16 +263,6 @@ else
         echo -e "${bldcya}Output directory is: ${bldgrn}Clean${rst}"
         echo ""
     fi
-fi
-
-
-# TWRP Recovery
-if [ "$opt_twrp" -eq 1 ]; then
-    echo -e "${bldcya}TWRP Recovery will be built${rst}"
-    export RECOVERY_VARIANT=twrp
-    echo ""
-else
-    unset RECOVERY_VARIANT
 fi
 
 
@@ -293,26 +312,26 @@ elif [ "$opt_sync" -eq 3 ]; then
     cp snapshot-"$device".xml .repo/manifests/
 
     # Prevent duplicate projects
-    cd .repo/local_manifests
+    cd .repo/local_manifests || exit
     for file in *.xml; do
         mv "$file" "$(echo $file | sed 's/\(.*\.\)xml/\1xmlback/')"
     done
 
     # Start snapshot file
-    cd "$DIR"
+    cd "$DIR" || exit
     repo init -m snapshot-"$device".xml
     echo -e "${bldcya}Fetching snapshot sources${rst}"
     echo ""
     repo sync -qdj"$opt_jobs"
 
     # Prevent duplicate backups
-    cd .repo/local_manifests
+    cd .repo/local_manifests || exit
     for file in *.xmlback; do
         mv "$file" "$(echo $file | sed 's/\(.*\.\)xmlback/\1xml/')"
     done
 
     # Remove snapshot file
-    cd "$DIR"
+    cd "$DIR" || exit
     rm -f .repo/manifests/snapshot-"$device".xml
     repo init
 fi
@@ -321,6 +340,16 @@ fi
 # Fetch extras
 if [ "$opt_fetch" -ne 0 ]; then
     ./vendor/pac/tools/extras.sh "$device"
+fi
+
+
+# Do not generate the changelog
+if [ "$opt_changelog" -ne 0 ]; then
+    echo -e "${bldcya}Changelog generation disabled${rst}"
+    export GENERATE_CHANGELOG=false
+    echo ""
+else
+    unset GENERATE_CHANGELOG
 fi
 
 
@@ -379,27 +408,56 @@ fi
 
 
 # Start compilation
-unset PAC_MAKE
 if [ "$opt_only" -eq 1 ]; then
-    echo -e "${bldcya}Starting compilation: ${bldgrn}Building Boot Image only${rst}"
+    echo -e "${bldcya}Starting compilation: ${bldgrn}Building ${bldylw}Boot Image only${rst}"
     echo ""
-    make -j$opt_jobs$opt_v$opt_i bootzip
+    make -j"$opt_jobs$opt_v$opt_i" bootzip
 elif [ "$opt_only" -eq 2 ]; then
-    echo -e "${bldcya}Starting compilation: ${bldgrn}Building Recovery Image only${rst}"
+    echo -e "${bldcya}Starting compilation: ${bldgrn}Building ${bldylw}Recovery Image only${rst}"
     echo ""
-    export PAC_MAKE=recoveryimage
-    make -j$opt_jobs$opt_v$opt_i recoveryimage
+    make -j"$opt_jobs$opt_v$opt_i" recoveryimage
 else
-    if [ -z "$PAC_VERSION_MINOR" ]; then
-        echo -e "${bldcya}Starting compilation: ${bldgrn}Building ${bldylw}PAC-ROM ${bldmag}$PAC_VERSION_MAJOR ${bldred}$PAC_MAINTENANCE${rst}"
-    else
-        echo -e "${bldcya}Starting compilation: ${bldgrn}Building ${bldylw}PAC-ROM ${bldmag}$PAC_VERSION_MAJOR ${bldcya}$PAC_VERSION_MINOR ${bldred}$PAC_MAINTENANCE${rst}"
-    fi
+    echo -e "${bldcya}Starting compilation: ${bldgrn}Building ${bldylw}PAC-ROM $VO${rst}"
     echo ""
-    make -j$opt_jobs$opt_v$opt_i bacon
+    make -j"$opt_jobs$opt_v$opt_i" bacon
 fi
 
 
 # Cleanup unused built
-rm -f "$OUTDIR"/target/product/"$device"/cm-*.*
 rm -f "$OUTDIR"/target/product/"$device"/pac_*-ota*.zip
+
+
+# Upload
+if [ "$opt_upload" -ne 0 ]; then
+    finally="$OUTDIR/target/product/$device/"
+    md5name=$(basename "${finally}"pac*.md5sum)
+    zipname=$(basename "${finally}"pac*.zip)
+
+    echo ""
+    if [ -s "$HOME/Server-$device" ]; then
+        if [ -f "$finally$md5name" ] && [ -f "$finally$zipname" ]; then
+            server="$HOME/Server-$device"
+
+            suser=$(awk -F'::' '{print $1}' "$server")
+            spass=$(awk -F'::' '{print $2}' "$server")
+            shost=$(awk -F'::' '{print $3}' "$server")
+            spath=$(awk -F'::' '{print $4}' "$server")
+
+            echo -e "${bldcya}Uploading to${bldmag} ${shost} ${bldcya}as${bldmag} ${suser} ${bldcya}at${bldmag} ${spath}${rst}"
+
+            echo -e "${bldgrn}Uploading $md5name${rst}"
+            curl -T "${finally}${md5name}" ftp://"${suser}:${spass}@${shost}:${spath}/${md5name}"
+
+            echo -e "${bldgrn}Uploading $zipname${rst}"
+            curl -T "${finally}${zipname}" ftp://"${suser}:${spass}@${shost}:${spath}/${zipname}"
+
+            echo -e "${bldgrn}Upload completed successfully${rst}"
+        else
+            echo -e "${bldgrn}Upload ERROR: The ROM file does not exist${rst}"
+        fi
+    else
+        echo -e "${bldgrn}The Server configuration file does not exist or it is empty${rst}"
+    fi
+fi
+
+echo ""

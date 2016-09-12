@@ -22,7 +22,8 @@ PRODUCT_COPY_FILES += vendor/pac/prebuilt/common/media/bootanimation/centre-900-
 
 # Additonal Packages
 PRODUCT_PACKAGES += \
-    PACConsole
+    PACConsole \
+    PACSetupWizard
 
 # PAC Overlays
 DEVICE_PACKAGE_OVERLAYS += vendor/pac/overlay/common
@@ -45,6 +46,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.low_ram=true \
     ro.config.max_starting_bg=8 \
     ro.sys.fw.bg_apps_limit=16
+endif
+
+# Use pac sounds by default
+ifeq ($(USE_PAC_SOUNDS),true)
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.ringtone=PAC-Ringtone.ogg \
+    ro.config.notification_sound=PAC-Notifications.ogg \
+    ro.config.alarm_alert=PAC-Alarm.ogg
 endif
 
 # ROMStats Properties
