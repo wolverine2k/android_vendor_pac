@@ -4,12 +4,11 @@
     This file is used to enable nightly builds for eligible devices.
 
     import vendor.pac.Device;
-    import vendor.pac.Maintainers;
-    import vendor.pac.Threads;
-
-    if (!device.getThreads() && !device.getMaintainers() && !device.downloadsPerWeek > 35) {
-      devices.runNightly=false;
+    ...
+    if (!device.getThreads() || !device.getMaintainers() || device.downloadsPerWeek < 35) {
+      device.runNightly=false;
     }
+    ...
 -->
 
 <manifest>
@@ -19,13 +18,12 @@
   <device name="armani"/>
   <device name="bacon"/>
   <device name="cancro"/>
-  <device name="castor"/>
-  <device name="castor_windy"/>
   <device name="condor"/>
   <device name="d2att"/>
   <device name="d2spr"/>
   <device name="d2tmo"/>
   <device name="d2vzw"/>
+  <device name="d850"/>
   <device name="d851"/>
   <device name="d855"/>
   <device name="ether"/>
@@ -49,7 +47,9 @@
   <device name="jflteusc"/>
   <device name="jfltevzw"/>
   <device name="jfltexx"/>
+  <device name="kenzo"/>
   <device name="lettuce"/>
+  <device name="ls990"/>
   <device name="lux"/>
   <device name="m7"/>
   <device name="m7spr"/>
@@ -57,6 +57,7 @@
   <device name="m8"/>
   <device name="mt2"/>
   <device name="obake"/>
+  <device name="oneplus3"/>
   <device name="onyx"/>
   <device name="osprey"/>
   <device name="otus"/>
@@ -70,6 +71,7 @@
   <device name="trltespr"/>
   <device name="trltetmo"/>
   <device name="trltexx"/>
+  <device name="vs985"/>
   <device name="Z008"/>
   <device name="Z00A"/>
   <!-- <device name="v500"/> -->

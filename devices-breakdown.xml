@@ -35,8 +35,11 @@
     </vendor>
     <vendor Name="LG">
         <device FullName="G-Pad" CodeName="v500"/>
+        <device FullName="G3 (AT&amp;T)" CodeName="d850"/>
         <device FullName="G3 (T-Mobile)" CodeName="d851"/>
         <device FullName="G3 (International)" CodeName="d855"/>
+        <device FullName="G3 (Sprint)" CodeName="ls990"/>
+        <device FullName="G3 (Verizon)" CodeName="vs985"/>
         <device FullName="Nexus 4" CodeName="mako"/>
         <device FullName="Nexus 5" CodeName="hammerhead"/>
         <device FullName="Optimus G (International)" CodeName="geehrc"/>
@@ -65,6 +68,7 @@
     </vendor>
     <vendor Name="OnePlus">
         <device FullName="One" CodeName="bacon"/>
+        <device FullName="3" CodeName="oneplus3"/>
         <device FullName="X" CodeName="onyx"/>
     </vendor>
     <vendor Name="Oppo">
@@ -103,8 +107,6 @@
         <device FullName="Xperia Z1" CodeName="honami"/>
         <device FullName="Xperia Z1 Compact" CodeName="amami"/>
         <device FullName="Xperia Z2" CodeName="sirius"/>
-        <device FullName="Xperia Z2 Tablet LTE" CodeName="castor"/>
-        <device FullName="Xperia Z2 Tablet" CodeName="castor_windy"/>
     </vendor>
     <vendor Name="Sony Ericsson">
         <device FullName="Live With Walkman" CodeName="coconut"/>
@@ -119,6 +121,7 @@
     </vendor>
     <vendor Name="Xiaomi">
         <device FullName="Redmi 1S" CodeName="armani"/>
+        <device FullName="Redmi Note 3 Pro" CodeName="kenzo"/>
         <device FullName="Mi3W/Mi4W" CodeName="cancro"/>
     </vendor>
     <vendor Name="Yu">
