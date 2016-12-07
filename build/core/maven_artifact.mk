@@ -47,7 +47,8 @@ $(LOCAL_PREBUILT_MODULE_FILE):
 		-Dmdep.overWriteSnapshots=true \
 		-Dmdep.overWriteReleases=true \
 		-Dmaven.wagon.http.ssl.insecure=true \
-		-Dmaven.wagon.http.ssl.allowall=true \		
+		-Dmaven.wagon.http.ssl.allowall=true \
+		-Dmaven.wagon.http.ssl.ignore.validity.dates=true \
 		-Dtransitive=false \
 		-DoutputDirectory=$(dir $@)
 	@echo -e ${CL_GRN}"Download:"${CL_RST}" $@"
