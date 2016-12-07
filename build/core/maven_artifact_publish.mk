@@ -47,6 +47,8 @@ $(full_target): $(LOCAL_MAVEN_TARGET_MODULE) $(path_to_file) $(artifact_path) $(
 			-Dfile=$(artifact_path) \
 			-DrepositoryId=$(repoId) \
 			-Dclassifier=$(classifier) \
+			-Dmaven.wagon.http.ssl.insecure=true \
+			-Dmaven.wagon.http.ssl.allowall=true \
 			-Dsources=$(sources) \
 			-Djavadoc=$(javadoc)
 	@echo -e ${CL_GRN}"Publishing:"${CL_RST}" $@"
